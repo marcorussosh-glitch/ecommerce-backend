@@ -8,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -55,12 +53,12 @@ class ProductServiceTest {
         when(productRepository.findById(99L))
                 .thenReturn(Optional.empty());
         //Act and Assert
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
+        ProductNotFoundException exception = assertThrows(
+                ProductNotFoundException.class,
                 () -> productService.findById(99L)
         );
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Product not found", exception.getMessage());
     }
 
 
@@ -149,9 +147,9 @@ class ProductServiceTest {
                 50
         );
         // Act and Assert
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> productService.update(1L, request));
+        ProductNotFoundException exception = assertThrows(ProductNotFoundException.class, () -> productService.update(1L, request));
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Product not found", exception.getMessage());
     }
 
     @Test
@@ -173,8 +171,8 @@ class ProductServiceTest {
         // Arrange
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
         // Act and Assert
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> productService.delete(1L));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        ProductNotFoundException exception = assertThrows(ProductNotFoundException.class, () -> productService.delete(1L));
+        assertEquals("Product not found", exception.getMessage());
 
         verify(productRepository).findById(1L);
         verify(productRepository, never()).delete(any(Product.class));

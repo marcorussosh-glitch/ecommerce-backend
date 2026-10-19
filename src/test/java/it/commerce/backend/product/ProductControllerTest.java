@@ -7,11 +7,9 @@ import it.commerce.backend.product.dto.UpdateProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -130,9 +128,7 @@ public class ProductControllerTest {
     @Test
     public void findByIdShouldReturnNotFoundWhenProductDoesNotExist() throws Exception {
 
-        when(productService.findById(99L)).thenThrow(new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Product not found"));
+        when(productService.findById(99L)).thenThrow(new ProductNotFoundException("Product not found"));
 
         mockMvc.perform(get("/api/products/99"))
                 .andExpect(status().isNotFound());
@@ -174,9 +170,8 @@ public class ProductControllerTest {
     @Test
     void updateShouldReturnNotFoundWhenProductDoesNotExist() throws Exception {
 
-        when(productService.update(eq(99L), any(UpdateProductRequest.class))).thenThrow(new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Product not found"));
+        when(productService.update(eq(99L), any(UpdateProductRequest.class)))
+                .thenThrow(new ProductNotFoundException("Product not found"));
 
         mockMvc.perform(put("/api/products/99")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -203,7 +198,7 @@ public class ProductControllerTest {
     @Test
     void deleteShouldReturnNotFoundWhenProductDoesNotExist() throws Exception {
 
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"))
+        doThrow(new ProductNotFoundException("Product not found"))
                 .when(productService).delete(99L);
 
         mockMvc.perform(delete("/api/products/99"))

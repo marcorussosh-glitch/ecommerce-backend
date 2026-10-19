@@ -3,9 +3,7 @@ package it.commerce.backend.product;
 import it.commerce.backend.product.dto.CreateProductRequest;
 import it.commerce.backend.product.dto.ProductResponse;
 import it.commerce.backend.product.dto.UpdateProductRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,9 +37,7 @@ public class ProductService {
 
     public ProductResponse findById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
         return toResponse(product);
     }
 
@@ -61,9 +57,7 @@ public class ProductService {
 
     public ProductResponse update(Long id, UpdateProductRequest request) {
         Product product = productRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Product not found"
-                ));
+                .orElseThrow(()-> new ProductNotFoundException("Product not found"));
 
         product.setName(request.name());
         product.setDescription(request.description());
@@ -77,9 +71,7 @@ public class ProductService {
 
     public void delete(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Product not found"
-                ));
+                .orElseThrow(()-> new ProductNotFoundException("Product not found"));
         productRepository.delete(product);
     }
 

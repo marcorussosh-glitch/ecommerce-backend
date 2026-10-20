@@ -9,6 +9,8 @@ public record ProductResponse (
         String description,
         BigDecimal price,
         Integer stockQuantity,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Long categoryId,
+        String categoryName
 ) {
 }

@@ -18,6 +18,10 @@ public record UpdateProductRequest (
 
         @NotNull
         @PositiveOrZero
-        Integer stockQuantity
+        Integer stockQuantity,
+
+        @NotNull
+        @Positive
+        Long categoryId
 ) {
 }

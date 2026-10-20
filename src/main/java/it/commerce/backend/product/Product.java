@@ -1,5 +1,6 @@
 package it.commerce.backend.product;
 
+import it.commerce.backend.category.Category;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -27,6 +28,10 @@ public class Product {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn (name = "category_id", nullable = false)
+    private Category category;
 
     public Product() {}
 
@@ -73,5 +78,9 @@ public class Product {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public Category getCategory() { return this.category; }
+
+    public void setCategory(Category category) { this.category = category; }
 
 }

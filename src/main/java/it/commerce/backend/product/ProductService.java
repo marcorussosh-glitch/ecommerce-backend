@@ -1,11 +1,16 @@
 package it.commerce.backend.product;
 
+import it.commerce.backend.category.Category;
+import it.commerce.backend.category.CategoryNotFoundException;
+import it.commerce.backend.category.CategoryRepository;
 import it.commerce.backend.product.dto.CreateProductRequest;
 import it.commerce.backend.product.dto.ProductResponse;
 import it.commerce.backend.product.dto.UpdateProductRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +20,13 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    private final CategoryRepository categoryRepository;
+
+    private Category findCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+    }
+
     private ProductResponse toResponse(Product product) {
         return new ProductResponse(
                 product.getId(),
@@ -22,12 +34,17 @@ public class ProductService {
                 product.getDescription(),
                 product.getPrice(),
                 product.getStockQuantity(),
-                product.getCreatedAt()
+                product.getCreatedAt(),
+                product.getCategory().getId(),
+                product.getCategory().getName()
         );
     }
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository,
+                          CategoryRepository categoryRepository) {
+
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public Page<ProductResponse> findAll(Pageable params) {
@@ -49,6 +66,7 @@ public class ProductService {
         product.setPrice(request.price());
         product.setStockQuantity(request.stockQuantity());
         product.setCreatedAt(LocalDateTime.now());
+        product.setCategory(findCategoryById(request.categoryId()));
 
         Product savedProduct = productRepository.save(product);
 
@@ -63,6 +81,7 @@ public class ProductService {
         product.setDescription(request.description());
         product.setPrice(request.price());
         product.setStockQuantity(request.stockQuantity());
+        product.setCategory(findCategoryById(request.categoryId()));
 
         Product updatedProduct = productRepository.save(product);
 

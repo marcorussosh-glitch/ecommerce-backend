@@ -18,6 +18,10 @@ public record CreateProductRequest (
 
         @NotNull
         @PositiveOrZero
-        Integer stockQuantity
+        Integer stockQuantity,
+
+        @NotNull
+        @Positive
+        Long categoryId
 ) {
 }

@@ -3,6 +3,8 @@ package it.commerce.backend.product;
 import it.commerce.backend.product.dto.CreateProductRequest;
 import it.commerce.backend.product.dto.ProductResponse;
 import it.commerce.backend.product.dto.UpdateProductRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,11 +30,9 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductResponse> findAll() {
-        return productRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public Page<ProductResponse> findAll(Pageable params) {
+        return productRepository.findAll(params)
+                .map(this::toResponse);
     }
 
     public ProductResponse findById(Long id) {

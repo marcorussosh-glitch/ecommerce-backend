@@ -4,6 +4,10 @@ import it.commerce.backend.product.dto.CreateProductRequest;
 import it.commerce.backend.product.dto.ProductResponse;
 import it.commerce.backend.product.dto.UpdateProductRequest;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +24,10 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> findAll() {
-        return productService.findAll();
+    public Page<ProductResponse> findAll(
+            @PageableDefault(sort = "id", direction = Sort.Direction.ASC)
+            Pageable params) {
+        return productService.findAll(params);
     }
 
     @GetMapping("/{id}")

@@ -8,9 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -26,6 +28,50 @@ class ProductServiceTest {
 
     @InjectMocks
     private ProductService productService;
+
+    @Test
+    void findAllShouldReturnPage() {
+        // Arrange
+        Product product1 = new Product();
+        product1.setName("Lampada LED 20W");
+        product1.setDescription("Lampada da 20W");
+        product1.setPrice(new BigDecimal("12.50"));
+        product1.setStockQuantity(30);
+        product1.setCreatedAt(LocalDateTime.now());
+
+        Product product2 = new Product();
+        product2.setName("Lampada LED 30W");
+        product2.setDescription("Lampada da 30W");
+        product2.setPrice(new BigDecimal("14.50"));
+        product2.setStockQuantity(30);
+        product2.setCreatedAt(LocalDateTime.now());
+
+        List<Product> products = List.of(product1, product2);
+
+        Pageable pageable = PageRequest.of(
+                0, 2, Sort.by("id").ascending()
+        );
+
+        Page<Product> productPages = new PageImpl<>(products, pageable, 3);
+
+        when(productRepository.findAll(pageable)).thenReturn(productPages);
+
+        // Act
+        Page<ProductResponse> pageResult = productService.findAll(pageable);
+
+        // Assert
+        assertEquals(3, pageResult.getTotalElements());
+        assertEquals(2, pageResult.getTotalPages());
+        assertEquals(2, pageResult.getNumberOfElements());
+        assertEquals(pageable, pageResult.getPageable());
+
+        assertEquals("Lampada LED 20W",
+                pageResult.getContent().get(0).name());
+        assertEquals("Lampada LED 30W",
+                pageResult.getContent().get(1).name());
+
+        verify(productRepository).findAll(pageable);
+    }
 
     @Test
     void findByIdShouldReturnProductWhenProductExists() {

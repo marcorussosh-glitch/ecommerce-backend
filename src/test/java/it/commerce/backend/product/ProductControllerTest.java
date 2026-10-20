@@ -7,6 +7,8 @@ import it.commerce.backend.product.dto.UpdateProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.*;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -90,17 +92,30 @@ public class ProductControllerTest {
                         30,
                         LocalDateTime.now()));
 
-        when(productService.findAll()).thenReturn(products);
+        Pageable pageable = PageRequest.of(
+                0,
+                2,
+                Sort.by("id").ascending());
+        Page<ProductResponse> productPage = new PageImpl<>(products, pageable, 3);
 
-        mockMvc.perform(get("/api/products"))
+        when(productService.findAll(any(Pageable.class))).thenReturn(productPage);
+
+        mockMvc.perform(get("/api/products")
+                        .param("page", "0")
+                        .param("size", "2")
+                        .param("sort", "id,asc"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("Piantana LED"))
-                .andExpect(jsonPath("$[0].price").value(29.99))
-                .andExpect(jsonPath("$[0].stockQuantity").value(30));
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].name").value("Piantana LED"))
+                .andExpect(jsonPath("$.content[0].price").value(29.99))
+                .andExpect(jsonPath("$.content[0].stockQuantity").value(30))
+                .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.totalPages").value(2))
+                .andExpect(jsonPath("$.number").value(0))
+                .andExpect(jsonPath("$.size").value(2));;
 
-        verify(productService).findAll();
+        verify(productService).findAll(any(Pageable.class));
     }
     @Test
     public void findByIdShouldReturnProduct() throws Exception {

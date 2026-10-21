@@ -41,7 +41,10 @@ public class ProductControllerTest {
                 "Piantana LED 30W, 6000k",
                 new BigDecimal("29.99"),
                 30,
-                LocalDateTime.now());
+                LocalDateTime.now(),
+                1L,
+                "Illuminazione");
+
         when(productService.create(any(CreateProductRequest.class))).thenReturn(mockProduct);
 
         mockMvc.perform(post("/api/products")
@@ -51,14 +54,19 @@ public class ProductControllerTest {
                                     "name": "Piantana LED",
                                     "description": "Piantana LED 30W, 6000k",
                                     "price": 29.99,
-                                    "stockQuantity": 30
+                                    "stockQuantity": 30,
+                                    "categoryId": 1
                                 }
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("Piantana LED"))
                 .andExpect(jsonPath("$.price").value(29.99))
-                .andExpect(jsonPath("$.stockQuantity").value(30));
+                .andExpect(jsonPath("$.stockQuantity").value(30))
+                .andExpect(jsonPath("$.categoryId").value(1))
+                .andExpect(jsonPath("$.categoryName").value("Illuminazione"));
+
+        verify(productService).create(any(CreateProductRequest.class));
 
     }
 
@@ -72,7 +80,8 @@ public class ProductControllerTest {
                                     "name": "",
                                     "description": "Piantana LED 30W, 6000k",
                                     "price": 29.99,
-                                    "stockQuantity": 30
+                                    "stockQuantity": 30,
+                                    "categoryId": 1
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
@@ -90,7 +99,9 @@ public class ProductControllerTest {
                         "Piantana LED 30W, 6000k",
                         new BigDecimal("29.99"),
                         30,
-                        LocalDateTime.now()));
+                        LocalDateTime.now(),
+                        1L,
+                        "Illuminazione"));
 
         Pageable pageable = PageRequest.of(
                 0,
@@ -110,10 +121,12 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.content[0].name").value("Piantana LED"))
                 .andExpect(jsonPath("$.content[0].price").value(29.99))
                 .andExpect(jsonPath("$.content[0].stockQuantity").value(30))
+                .andExpect(jsonPath("$.content[0].categoryId").value(1))
+                .andExpect(jsonPath("$.content[0].categoryName").value("Illuminazione"))
                 .andExpect(jsonPath("$.totalElements").value(3))
                 .andExpect(jsonPath("$.totalPages").value(2))
                 .andExpect(jsonPath("$.number").value(0))
-                .andExpect(jsonPath("$.size").value(2));;
+                .andExpect(jsonPath("$.size").value(2));
 
         verify(productService).findAll(any(Pageable.class));
     }
@@ -126,7 +139,9 @@ public class ProductControllerTest {
                 "Piantana LED 30W, 6000k",
                 new BigDecimal("29.99"),
                 30,
-                LocalDateTime.now());
+                LocalDateTime.now(),
+                1L,
+                "Illuminazione");
 
         when(productService.findById(1L)).thenReturn(product);
 
@@ -136,7 +151,9 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("Piantana LED"))
                 .andExpect(jsonPath("$.price").value(29.99))
-                .andExpect(jsonPath("$.stockQuantity").value(30));
+                .andExpect(jsonPath("$.stockQuantity").value(30))
+                .andExpect(jsonPath("$.categoryId").value(1))
+                .andExpect(jsonPath("$.categoryName").value("Illuminazione"));
 
         verify(productService).findById(1L);
     }
@@ -159,7 +176,9 @@ public class ProductControllerTest {
                 "Piantana LED 30W, 6000k",
                 new BigDecimal("29.99"),
                 30,
-                LocalDateTime.now());
+                LocalDateTime.now(),
+                1L,
+                "Illuminazione");
 
         when(productService.update(eq(1L), any(UpdateProductRequest.class)))
                 .thenReturn(updatedProduct);
@@ -171,14 +190,17 @@ public class ProductControllerTest {
                                     "name": "Piantana LED Aggiornata",
                                     "description": "Piantana LED 30W, 6000k",
                                     "price": 29.99,
-                                    "stockQuantity": 30
+                                    "stockQuantity": 30,
+                                    "categoryId": 1
                                 }
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("Piantana LED Aggiornata"))
                 .andExpect(jsonPath("$.price").value(29.99))
-                .andExpect(jsonPath("$.stockQuantity").value(30));
+                .andExpect(jsonPath("$.stockQuantity").value(30))
+                .andExpect(jsonPath("$.categoryId").value(1))
+                .andExpect(jsonPath("$.categoryName").value("Illuminazione"));
 
         verify(productService).update(eq(1L), any(UpdateProductRequest.class));
     }
@@ -195,7 +217,8 @@ public class ProductControllerTest {
                                     "name": "Piantana LED Aggiornata",
                                     "description": "Piantana LED 30W, 6000k",
                                     "price": 29.99,
-                                    "stockQuantity": 30
+                                    "stockQuantity": 30,
+                                    "categoryId": 1
                                 }
                                 """))
                 .andExpect(status().isNotFound());

@@ -5,6 +5,7 @@ import it.commerce.backend.category.dto.CreateCategoryRequest;
 import it.commerce.backend.category.dto.UpdateCategoryRequest;
 import it.commerce.backend.product.Product;
 import it.commerce.backend.product.ProductNotFoundException;
+import it.commerce.backend.product.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,8 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    private final ProductRepository productRepository;
+
     private CategoryResponse toResponse(Category category) {
         return new CategoryResponse(
                 category.getId(),
@@ -23,8 +26,10 @@ public class CategoryService {
         );
     }
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository,
+                           ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     public List<CategoryResponse> findAll() {
@@ -61,9 +66,17 @@ public class CategoryService {
         return toResponse(updatedCategory);
     }
 
-    /*public void delete(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(()-> new ProductNotFoundException("Product not found"));
-        productRepository.delete(product);
-    }*/
+    public void delete(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() ->
+                        new CategoryNotFoundException("Category not found"));
+
+        if (productRepository.existsByCategory_Id(id)) {
+            throw new CategoryInUseException(
+                    "Cannot delete a category associated with products"
+            );
+        }
+
+        categoryRepository.delete(category);
+    }
 }

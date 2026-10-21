@@ -1,5 +1,6 @@
 package it.commerce.backend;
 
+import it.commerce.backend.category.CategoryInUseException;
 import it.commerce.backend.category.CategoryNotFoundException;
 import it.commerce.backend.product.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> categoryNotFoundHandler (CategoryNotFoundException exception){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+    @ExceptionHandler(CategoryInUseException.class)
+    public ResponseEntity<String> categoryInUseHandler (CategoryInUseException exception){
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(exception.getMessage());
     }
 }

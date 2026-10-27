@@ -2,6 +2,7 @@ package it.commerce.backend.category;
 
 import it.commerce.backend.category.dto.CategoryResponse;
 import it.commerce.backend.category.dto.CreateCategoryRequest;
+import it.commerce.backend.category.dto.UpdateCategoryRequest;
 import it.commerce.backend.product.ProductController;
 import it.commerce.backend.product.ProductService;
 import it.commerce.backend.product.dto.CreateProductRequest;
@@ -19,10 +20,8 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -114,5 +113,109 @@ public class CategoryControllerTest {
 
         verify(categoryService).create(any(CreateCategoryRequest.class));
 
+    }
+    @Test
+    public void createShouldReturnBadRequestWhenNameIsBlank() throws Exception {
+
+        mockMvc.perform(post("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "name": "",
+                                    "description": "Illuminazione per interni ed esterni"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verify(categoryService, never()).create(any(CreateCategoryRequest.class));
+    }
+    @Test
+    public void updateShouldReturnUpdatedCategory() throws Exception {
+
+        CategoryResponse newCategory = new CategoryResponse(
+                1L,
+                "Illuminazione",
+                "Illuminazione per interni ed esterni"
+        );
+
+        when(categoryService.update(eq(1L), any(UpdateCategoryRequest.class))).thenReturn(newCategory);
+
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "name": "Illuminazione",
+                                    "description": "Illuminazione per interni ed esterni"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("Illuminazione"))
+                .andExpect(jsonPath("$.description").value("Illuminazione per interni ed esterni"));
+
+        verify(categoryService).update(eq(1L), any(UpdateCategoryRequest.class));
+    }
+    @Test
+    public void updateShouldReturnNotFoundWhenCategoryDoesNotExist() throws Exception {
+
+        when(categoryService.update(eq(1L), any(UpdateCategoryRequest.class))).thenThrow(new CategoryNotFoundException("Category not found"));
+
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "name": "Illuminazione",
+                                    "description": "Illuminazione per interni ed esterni"
+                                }
+                                """))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$").value("Category not found"));
+
+        verify(categoryService).update(eq(1L), any(UpdateCategoryRequest.class));
+    }
+    @Test
+    public void updateShouldReturnBadRequestWhenNameIsBlank() throws Exception {
+
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "name": "",
+                                    "description": "Illuminazione per interni ed esterni"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verify(categoryService, never()).update(eq(1L),any(UpdateCategoryRequest.class));
+    }
+    @Test
+    public void deleteShouldReturnNoContentWhenCategoryIsDeleted() throws Exception {
+
+        mockMvc.perform(delete("/api/categories/1"))
+                .andExpect(status().isNoContent());
+
+        verify(categoryService).delete(1L);
+    }
+    @Test
+    public void deleteShouldReturnNotFoundWhenCategoryDoesNotExist() throws Exception {
+
+        doThrow(new CategoryNotFoundException("Category not found")).when(categoryService).delete(1L);
+
+        mockMvc.perform(delete("/api/categories/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$").value("Category not found"));
+
+        verify(categoryService).delete(1L);
+    }
+    @Test
+    public void deleteShouldReturnConflictWhenCategoryIsInUse() throws Exception {
+
+        doThrow(new CategoryInUseException("Cannot delete a category associated with products")).when(categoryService).delete(1L);
+
+        mockMvc.perform(delete("/api/categories/1"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$").value("Cannot delete a category associated with products"));
+
+        verify(categoryService).delete(1L);
     }
 }

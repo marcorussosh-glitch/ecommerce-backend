@@ -1,13 +1,18 @@
 package it.commerce.backend.user;
 
+import it.commerce.backend.product.dto.ProductResponse;
 import it.commerce.backend.user.dto.CreateUserRequest;
+import it.commerce.backend.user.dto.UpdateUserRequest;
 import it.commerce.backend.user.dto.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -60,5 +65,48 @@ public class UserService {
         User savedUser = userRepository.save(user);
         return toResponse(savedUser);
     }
+
+    public Page<UserResponse> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(this::toResponse);
+    }
+
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException(id));
+
+        return toResponse(user);
+    }
+
+    public UserResponse getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new UserNotFoundException(email));
+        return toResponse(user);
+    }
+
+    public UserResponse updateUserProfile(Long id, UpdateUserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException(id));
+
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
+
+        User savedUser = userRepository.save(user);
+
+        return toResponse(savedUser);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

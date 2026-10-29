@@ -3,6 +3,7 @@ package it.commerce.backend;
 import it.commerce.backend.category.CategoryInUseException;
 import it.commerce.backend.category.CategoryNotFoundException;
 import it.commerce.backend.product.ProductNotFoundException;
+import it.commerce.backend.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +30,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> categoryInUseHandler (CategoryInUseException exception){
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
+                .body(exception.getMessage());
+    }
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> userNotFoundHandler (UserNotFoundException exception){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(exception.getMessage());
     }
 }

@@ -1,0 +1,3 @@
+ALTER TABLE users
+    ALTER COLUMN user_type TYPE VARCHAR(30),
+    ALTER COLUMN user_status TYPE VARCHAR(30);

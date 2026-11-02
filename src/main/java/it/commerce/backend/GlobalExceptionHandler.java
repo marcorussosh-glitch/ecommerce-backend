@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-@ResponseStatus
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
@@ -44,7 +43,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidUserStatusTransitionException.class)
     public ResponseEntity<String> invalidUserStatusTransitionHandler (InvalidUserStatusTransitionException exception){
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.CONFLICT)
                 .body(exception.getMessage());
     }
     @ExceptionHandler(EmailNotVerifiedException.class)

@@ -3,10 +3,6 @@ package it.commerce.backend.category;
 import it.commerce.backend.category.dto.CategoryResponse;
 import it.commerce.backend.category.dto.CreateCategoryRequest;
 import it.commerce.backend.category.dto.UpdateCategoryRequest;
-import it.commerce.backend.product.ProductController;
-import it.commerce.backend.product.ProductService;
-import it.commerce.backend.product.dto.CreateProductRequest;
-import it.commerce.backend.product.dto.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -14,8 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;

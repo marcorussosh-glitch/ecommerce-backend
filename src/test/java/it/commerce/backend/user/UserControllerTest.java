@@ -1,6 +1,5 @@
 package it.commerce.backend.user;
 
-import it.commerce.backend.product.dto.ProductResponse;
 import it.commerce.backend.user.dto.CreateUserRequest;
 import it.commerce.backend.user.dto.UpdateUserRequest;
 import it.commerce.backend.user.dto.UpdateUserStatusRequest;
@@ -14,14 +13,12 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

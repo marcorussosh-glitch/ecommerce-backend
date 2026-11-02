@@ -3,8 +3,6 @@ package it.commerce.backend.category;
 import it.commerce.backend.category.dto.CategoryResponse;
 import it.commerce.backend.category.dto.CreateCategoryRequest;
 import it.commerce.backend.category.dto.UpdateCategoryRequest;
-import it.commerce.backend.product.Product;
-import it.commerce.backend.product.ProductNotFoundException;
 import it.commerce.backend.product.ProductRepository;
 import org.springframework.stereotype.Service;
 

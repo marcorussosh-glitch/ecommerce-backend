@@ -3,6 +3,8 @@ package it.commerce.backend;
 import it.commerce.backend.category.CategoryInUseException;
 import it.commerce.backend.category.CategoryNotFoundException;
 import it.commerce.backend.product.ProductNotFoundException;
+import it.commerce.backend.user.EmailNotVerifiedException;
+import it.commerce.backend.user.InvalidUserStatusTransitionException;
 import it.commerce.backend.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> userNotFoundHandler (UserNotFoundException exception){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+    @ExceptionHandler(InvalidUserStatusTransitionException.class)
+    public ResponseEntity<String> invalidUserStatusTransitionHandler (InvalidUserStatusTransitionException exception){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    public ResponseEntity<String> emailNotVerifiedHandler (EmailNotVerifiedException exception){
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(exception.getMessage());
     }
 }

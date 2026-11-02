@@ -1,26 +1,21 @@
 package it.commerce.backend.user;
 
-import it.commerce.backend.product.dto.ProductResponse;
 import it.commerce.backend.user.dto.CreateUserRequest;
 import it.commerce.backend.user.dto.UpdateUserRequest;
+import it.commerce.backend.user.dto.UpdateUserStatusRequest;
 import it.commerce.backend.user.dto.UserResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class UserService {
 
-    @Autowired
     private final UserRepository userRepository;
 
-    @Autowired
     private final PasswordEncoder passwordEncoder;
 
     private UserResponse toResponse(User user) {
@@ -35,7 +30,20 @@ public class UserService {
                 user.getCreatedAt());
     }
 
-    UserService(UserRepository userRepository,  PasswordEncoder passwordEncoder) {
+    private void validateStatusTransition(User user, UserStatus newStatus) {
+
+        UserStatus currentStatus = user.getUserStatus();
+        UserType userType = user.getUserType();
+
+        if((currentStatus != UserStatus.PENDING_APPROVAL) && newStatus == UserStatus.PENDING_APPROVAL)
+            throw new InvalidUserStatusTransitionException(currentStatus, newStatus);
+
+        if(userType == UserType.BUSINESS && !user.isEmailVerified() && newStatus == UserStatus.ACTIVE)
+            throw new EmailNotVerifiedException("Email not verified");
+
+    }
+
+    public UserService(UserRepository userRepository,  PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -96,17 +104,17 @@ public class UserService {
         return toResponse(savedUser);
     }
 
+    public UserResponse updateUserStatus(Long id, UpdateUserStatusRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException(id));
 
+        UserStatus newStatus = request.userStatus();
 
+        validateStatusTransition(user, newStatus);
 
+        user.setUserStatus(newStatus);
 
-
-
-
-
-
-
-
-
-
+        User savedUser = userRepository.save(user);
+        return toResponse(savedUser);
+    }
 }

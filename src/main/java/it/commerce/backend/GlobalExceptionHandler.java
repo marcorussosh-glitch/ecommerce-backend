@@ -3,6 +3,7 @@ package it.commerce.backend;
 import it.commerce.backend.category.CategoryInUseException;
 import it.commerce.backend.category.CategoryNotFoundException;
 import it.commerce.backend.product.ProductNotFoundException;
+import it.commerce.backend.user.EmailAlreadyExistsException;
 import it.commerce.backend.user.EmailNotVerifiedException;
 import it.commerce.backend.user.InvalidUserStatusTransitionException;
 import it.commerce.backend.user.UserNotFoundException;
@@ -48,6 +49,12 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(EmailNotVerifiedException.class)
     public ResponseEntity<String> emailNotVerifiedHandler (EmailNotVerifiedException exception){
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(exception.getMessage());
+    }
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<String> emailAlreadyExistsHandler (EmailAlreadyExistsException exception){
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(exception.getMessage());

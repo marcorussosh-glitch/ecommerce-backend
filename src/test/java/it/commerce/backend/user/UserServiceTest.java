@@ -75,6 +75,7 @@ public class UserServiceTest {
         verify(userRepository).save(userCaptor.capture());
 
         assertEquals("hashed-password", userCaptor.getValue().getPasswordHash());
+        assertEquals(UserRole.USER, userCaptor.getValue().getUserRole());
     }
     @Test
     void createUserShouldReturnUserWhenBusinessUserIsCreated() {
@@ -117,6 +118,7 @@ public class UserServiceTest {
         verify(userRepository).save(userCaptor.capture());
 
         assertEquals("hashed-password", userCaptor.getValue().getPasswordHash());
+        assertEquals(UserRole.USER, userCaptor.getValue().getUserRole());
     }
 
     @Test
@@ -152,6 +154,7 @@ public class UserServiceTest {
         userTest1.setPasswordHash("hashed-password-1");
         userTest1.setUserStatus(UserStatus.PENDING_APPROVAL);
         userTest1.setUserType(UserType.BUSINESS);
+        userTest1.setUserRole(UserRole.USER);
         userTest1.setEmailVerified(false);
         userTest1.setCreatedAt(LocalDateTime.now());
 
@@ -163,6 +166,7 @@ public class UserServiceTest {
         userTest2.setPasswordHash("hashed-password-2");
         userTest2.setUserStatus(UserStatus.ACTIVE);
         userTest2.setUserType(UserType.PRIVATE);
+        userTest1.setUserRole(UserRole.USER);
         userTest2.setEmailVerified(true);
         userTest2.setCreatedAt(LocalDateTime.now());
 
@@ -214,6 +218,7 @@ public class UserServiceTest {
         user.setPasswordHash("hashed-password");
         user.setUserStatus(UserStatus.PENDING_APPROVAL);
         user.setUserType(UserType.BUSINESS);
+        user.setUserRole(UserRole.USER);
         user.setEmailVerified(false);
         user.setCreatedAt(LocalDateTime.now());
 
@@ -257,6 +262,7 @@ public class UserServiceTest {
         user.setPasswordHash("hashed-password");
         user.setUserStatus(UserStatus.PENDING_APPROVAL);
         user.setUserType(UserType.BUSINESS);
+        user.setUserRole(UserRole.USER);
         user.setEmailVerified(false);
         user.setCreatedAt(LocalDateTime.now());
 
@@ -302,6 +308,7 @@ public class UserServiceTest {
         user.setPasswordHash("hashed-password");
         user.setUserStatus(UserStatus.ACTIVE);
         user.setUserType(UserType.PRIVATE);
+        user.setUserRole(UserRole.USER);
         user.setEmailVerified(true);
 
         LocalDateTime createdAt = LocalDateTime.now();
@@ -340,6 +347,7 @@ public class UserServiceTest {
 
         assertEquals("Mario", savedUser.getFirstName());
         assertEquals("Rossi", savedUser.getLastName());
+        assertEquals(UserRole.USER, savedUser.getUserRole());
 
         // Verify
         verify(userRepository).findById(1L);
@@ -374,6 +382,7 @@ public class UserServiceTest {
         user.setPasswordHash("hashed-password");
         user.setUserStatus(UserStatus.PENDING_APPROVAL);
         user.setUserType(UserType.BUSINESS);
+        user.setUserRole(UserRole.USER);
         user.setEmailVerified(true);
 
         LocalDateTime createdAt = LocalDateTime.now();
@@ -408,6 +417,7 @@ public class UserServiceTest {
         User savedUser = userCaptor.getValue();
 
         assertEquals(UserStatus.ACTIVE, savedUser.getUserStatus());
+        assertEquals(UserRole.USER, savedUser.getUserRole());
 
         // Verify
         verify(userRepository).findById(1L);
@@ -426,6 +436,7 @@ public class UserServiceTest {
         user.setPasswordHash("hashed-password");
         user.setUserStatus(UserStatus.ACTIVE);
         user.setUserType(UserType.BUSINESS);
+        user.setUserRole(UserRole.USER);
         user.setEmailVerified(true);
 
         LocalDateTime createdAt = LocalDateTime.now();
@@ -460,6 +471,7 @@ public class UserServiceTest {
         User savedUser = userCaptor.getValue();
 
         assertEquals(UserStatus.SUSPENDED, savedUser.getUserStatus());
+        assertEquals(UserRole.USER, savedUser.getUserRole());
 
         // Verify
         verify(userRepository).findById(1L);

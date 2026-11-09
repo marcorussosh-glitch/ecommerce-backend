@@ -67,6 +67,7 @@ public class UserService {
             user.setUserStatus(UserStatus.PENDING_APPROVAL);
         }
 
+        user.setUserRole(UserRole.USER);
         user.setEmailVerified(false);
         user.setCreatedAt(LocalDateTime.now());
 

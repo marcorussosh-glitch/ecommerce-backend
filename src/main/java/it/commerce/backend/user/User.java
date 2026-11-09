@@ -32,6 +32,10 @@ public class User {
     @Column(name = "user_status", nullable = false)
     private UserStatus userStatus;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role", nullable = false)
+    private UserRole userRole;
+
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
 
@@ -91,6 +95,10 @@ public class User {
     public void setUserStatus(UserStatus userStatus) {
         this.userStatus = userStatus;
     }
+
+    public UserRole getUserRole() { return userRole; }
+
+    public void setUserRole(UserRole userRole) { this.userRole = userRole; }
 
     public boolean isEmailVerified() {
         return emailVerified;

@@ -15,7 +15,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @EnableWebSecurity
@@ -51,7 +50,6 @@ class SecurityConfigTest {
     void adminShouldReceiveOkWhenAccessingAdminEndpoint()  throws Exception {
 
         mockMvc.perform(get("/api/admin/test"))
-                .andDo(print())
                 .andExpect(status().isOk());
     }
 
@@ -61,7 +59,6 @@ class SecurityConfigTest {
     void userShouldReceiveOkWhenAccessingAuthenticatedEndpoint()  throws Exception {
 
         mockMvc.perform(get("/api/test"))
-                .andDo(print())
                 .andExpect(status().isOk());
     }
 
